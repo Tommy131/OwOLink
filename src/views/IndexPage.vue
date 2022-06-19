@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-import {owo, logger} from '@/assets/js/OwOTools.js';
+import {owo, logger} from 'owotools';
 import DefaultButton from '@/components/DefaultButton.vue';
 import ShowValidity from '@/components/ShowValidity.vue';
 
