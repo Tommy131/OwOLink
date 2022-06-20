@@ -1,8 +1,20 @@
 <script setup>
 import { ref } from 'vue';
 import {owo, logger} from 'owotools';
+import Swal from 'sweetalert2';
+import 'sweetalert2/src/sweetalert2.scss';
+import axios from 'axios';
 import DefaultButton from '@/components/DefaultButton.vue';
 import ShowValidity from '@/components/ShowValidity.vue';
+
+
+axios.defaults.withCredentials = false;
+axios.defaults.crossDomain = true;
+axios.defaults.changeOrigin = true;
+axios.defaults.headers.get['Content-Type'] = 'application/x-www-form-urlencoded';
+axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
+axios.defaults.headers.common['Access-Control-Allow-Methods'] = 'GET,HEAD,OPTIONS,POST,PUT';
+axios.defaults.headers.common['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, x-client-key, x-client-token, x-client-secret, Authorization';
 
 let originalUrl = ref('');
 let display     = ref(false);
@@ -11,11 +23,61 @@ function checkValidity() {
   let url = originalUrl.value;
   if(url.length == 0) {
     display.value = false;
-    return;
+    return 0;
   }
   display.value = !owo.isValidUrl(url);
 }
 
+function onSubmit() {
+  if(checkValidity() === 0) {
+    Swal.fire({
+      title: '出错了惹!',
+      text: '请检查填写的URL地址是否为空!',
+      icon: 'warning',
+      confirmButtonText: 'OK...'
+    });
+    logger.info('URL为空!');
+    return;
+  }
+
+  if(display.value === true) {
+    Swal.fire({
+      title: '格式不正确噢!',
+      text: '填写的URL不合法, 请仔细检查后再次输入~',
+      icon: 'error',
+      confirmButtonText: '耶比( •̀ ω •́ )y'
+    });
+    logger.error('请验证URL的可用性!');
+    return;
+  }
+
+  Swal.fire({
+    title: '缩短URL成功!',
+    text: '即将快递给你新鲜出炉的短链接, 请耐心等待!',
+    icon: 'success',
+    confirmButtonText: '好的!( •̀ ω •́ )~'
+  });
+
+
+  axios.get(originalUrl.value)
+  .then((response) => {
+    Swal.fire({
+      title: '===执行结果===',
+      text: '你的短链接在此!' + '[URL]',
+      icon: 'success',
+      confirmButtonText: "多谢啦(●'◡'●)"
+    });
+    logger.success('缩短URL成功!');
+  })
+  .catch((error) => {
+    Swal.fire({
+      title: '请求出错!',
+      text: error.response.message,
+      icon: 'error',
+      confirmButtonText: 'OK...'
+    });
+  });
+}
 </script>
 
 <template>
@@ -26,10 +88,10 @@ function checkValidity() {
         <div class="display-flex direction-row space-between">
           <ShowValidity :isDisplayed="display" :url="originalUrl" />
           <div class="full-size display-flex direction-column">
-            <input placeholder="输入需要分享的原始URL..." v-model="originalUrl" @input="checkValidity" />
+            <input placeholder="输入需要分享的原始URL..." v-model="originalUrl" @input="checkValidity" @keyup.enter="onSubmit" />
             <transition><p v-if="display" class="label-invalid">当前输入的URL地址不合法!</p></transition>
           </div>
-          <DefaultButton text="提交" />
+          <DefaultButton text="提交" @click="onSubmit" />
         </div>
       </div>
     </div>

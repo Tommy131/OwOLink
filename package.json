@@ -10,6 +10,8 @@
   "dependencies": {
     "axios": "^0.27.2",
     "owotools": "git+https://github.com/tommy131/owotools.git",
+    "sass": "^1.52.3",
+    "sweetalert2": "^11.4.18",
     "vue": "^3.2.36",
     "vue-router": "^4.0.15"
   },
