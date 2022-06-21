@@ -20,6 +20,7 @@ let originalUrl = ref('');
 let display     = ref(false);
 
 function checkValidity() {
+  originalUrl.value = originalUrl.value.trim();
   let url = originalUrl.value;
   if(url.length == 0) {
     display.value = false;
