@@ -11,21 +11,21 @@ set input=N
 
 :create
 if not exist %CURRENT_PATH% (
-	echo 正在移动编译文件夹...
-	move %ORIGINAL_PATH%\dist %CURRENT_PATH%
-	pause
-	exit
+    echo 正在移动编译文件夹...
+    move %ORIGINAL_PATH%\dist %CURRENT_PATH%
+    pause
+    exit
 )
 
 echo 路径: %CURRENT_PATH%
 set /p input="文件夹下的所有文件将被删除！此操作不可逆！[Y/N]  "
 
 if %input% == Y (
-	echo   [已确认删除!]
-	rd/s/q %CURRENT_PATH%
-	goto create
+    echo   [已确认删除!]
+    rd/s/q %CURRENT_PATH%
+    goto create
 ) else (
-	echo 已取消.
+    echo 已取消.
 )
 
 cd %ORIGINAL_PATH%
