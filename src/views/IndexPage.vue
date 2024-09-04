@@ -7,15 +7,6 @@ import axios from 'axios';
 import DefaultButton from '@/components/DefaultButton.vue';
 import ShowValidity from '@/components/ShowValidity.vue';
 
-
-axios.defaults.withCredentials = false;
-axios.defaults.crossDomain = true;
-axios.defaults.changeOrigin = true;
-axios.defaults.headers.get['Content-Type'] = 'application/x-www-form-urlencoded';
-axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
-axios.defaults.headers.common['Access-Control-Allow-Methods'] = 'GET,HEAD,OPTIONS,POST,PUT';
-axios.defaults.headers.common['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, x-client-key, x-client-token, x-client-secret, Authorization';
-
 let originalUrl = ref('');
 let display     = ref(false);
 
@@ -60,24 +51,42 @@ function onSubmit() {
   });
 
 
-  axios.get(originalUrl.value)
+  axios.post('http://localhost:8080/s/api/url-check', {
+    url: originalUrl.value
+  })
   .then((response) => {
-    Swal.fire({
-      title: '===执行结果===',
-      text: '你的短链接在此!' + '[URL]',
-      icon: 'success',
-      confirmButtonText: "多谢啦(●'◡'●)"
-    });
-    logger.success('缩短URL成功!');
+    const result = response.data.result;
+
+    if (result) {
+      const result = response.data.result;
+      const shortUrl = response.data.short_url;
+      Swal.fire({
+        title: '===执行结果===',
+        text: '你的短链接在此! ' + shortUrl,
+        icon: 'success',
+        confirmButtonText: "多谢啦(●'◡'●)"
+      });
+      logger.success('缩短URL成功! 新的短链接: ' + shortUrl);
+    } else {
+      Swal.fire({
+        title: '===执行结果===',
+        text: '抱歉，链接无法访问: ' + originalUrl.value,
+        icon: 'error',
+        confirmButtonText: "了解了..."
+      });
+      logger.error('URL 无法访问!');
+    }
   })
   .catch((error) => {
     Swal.fire({
       title: '请求出错!',
-      text: error.response.message,
+      text: error.response ? error.response.data.message : '未知错误',
       icon: 'error',
       confirmButtonText: 'OK...'
     });
+    logger.error('请求出错: ' + (error.response ? error.response.data.message : '未知错误'));
   });
+
 }
 </script>
 

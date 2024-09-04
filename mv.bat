@@ -4,7 +4,7 @@ TITLE 编译文件移动脚本
 set ORIGINAL_PATH=%cd%
 cd ../..
 set VUE_BUILT_PATH=%cd%
-set TARGET_DEL_DIR=vuetest
+set TARGET_DEL_DIR=vuetest.com
 set CURRENT_PATH=%VUE_BUILT_PATH%\%TARGET_DEL_DIR%
 set input=N
 

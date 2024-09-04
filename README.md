@@ -1,12 +1,11 @@
-# OwOLink
+# OwOLink-Vue
 
-Welcome to visit this repository :) Here is a repo I used 2 days learned Vue 3 and developed it.<br/>
+Welcome to visit this repository :) Here is a repo I used 2 days learned Vue 3 and developed it.
+
 OwOLink is a repository that share the longer Url in the shortest possible way.
 
-TODO...<br/>
-BUT WAIT, I CAN SHOW YOU THE DEMO!!!<br/>
+Backend: [OwOLink-Go](https://github.com/Tommy131/OwOWeb-Go/tree/main/modules/owol)
 ![Effect.GIF](tests/effect.gif)
-<hr/>
 
 ## Recommended IDE Setup
 
