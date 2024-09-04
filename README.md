@@ -7,6 +7,8 @@ OwOLink is a repository that share the longer Url in the shortest possible way.
 Backend: [OwOLink-Go](https://github.com/Tommy131/OwOWeb-Go/tree/main/modules/owol)
 ![Effect.GIF](tests/effect.gif)
 
+Online Demo: [Click Me :)](https://owol.cc/)
+
 ## Recommended IDE Setup
 
 [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
