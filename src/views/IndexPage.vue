@@ -1,14 +1,37 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import {owo, logger} from 'owotools';
 import Swal from 'sweetalert2';
 import 'sweetalert2/src/sweetalert2.scss';
 import axios from 'axios';
 import DefaultButton from '@/components/DefaultButton.vue';
 import ShowValidity from '@/components/ShowValidity.vue';
+import githubLogo from '@/assets/img/github-mark-white.svg';
+
+const apiUrl = 'http://localhost:8080/api/owol';
 
 let originalUrl = ref('');
 let display     = ref(false);
+const totalVisits = ref(0);
+
+const forbiddenDomains = [
+  'http://localhost/',
+  'http://127.0.0.1/',
+  'https://owol.cc/'
+];
+
+onMounted(async () => {
+  try {
+    const response = await axios.get(apiUrl + '/visit-stats');
+    totalVisits.value = response.data.totalVisits;
+  } catch (error) {
+    console.error('Failed to fetch visit count:', error);
+  }
+});
+
+function isForbiddenURL(url) {
+  return forbiddenDomains.some(domain => url.startsWith(domain));
+}
 
 function checkValidity() {
   originalUrl.value = originalUrl.value.trim();
@@ -43,15 +66,25 @@ function onSubmit() {
     return;
   }
 
+  if(isForbiddenURL(originalUrl.value)) {
+    Swal.fire({
+      title: '错误!',
+      text: '无法缩短该URL.',
+      icon: 'error',
+      confirmButtonText: 'OK'
+    });
+    return;
+  }
+
   Swal.fire({
-    title: '缩短URL成功!',
+    title: '请求提交成功!',
     text: '即将快递给你新鲜出炉的短链接, 请耐心等待!',
     icon: 'success',
     confirmButtonText: '好的!( •̀ ω •́ )~'
   });
 
 
-  axios.post('http://localhost:8080/s/api/url-check', {
+  axios.post(apiUrl + '/url-check', {
     url: originalUrl.value
   })
   .then((response) => {
@@ -72,7 +105,7 @@ function onSubmit() {
         title: '===执行结果===',
         text: '抱歉，链接无法访问: ' + originalUrl.value,
         icon: 'error',
-        confirmButtonText: "了解了..."
+        confirmButtonText: '了解了...'
       });
       logger.error('URL 无法访问!');
     }
@@ -91,6 +124,11 @@ function onSubmit() {
 </script>
 
 <template>
+  <!-- GitHub Logo -->
+  <a href="https://github.com/Tommy131/OwOLink/" target="_blank" class="github-logo">
+    <img :src="githubLogo" alt="GitHub Logo">
+  </a>
+
   <div class="container">
     <div class="inner-container flex-center direction-column">
       <div class="title-box"><h1>OwOLink - 快速分享你的网址</h1></div>
@@ -106,6 +144,14 @@ function onSubmit() {
       </div>
     </div>
   </div>
+
+  <!-- 底部版权信息和访问统计 -->
+  <footer class="footer">
+      <div class="copyright">
+        <p>&copy; 2024 <b><a href="https://owoblog.com/blog/" target="_blank">OwOTeam</a></b> - <b>OwOLink</b>. All rights reserved.</p>
+        <p>Website visits: {{ totalVisits }}</p>
+      </div>
+    </footer>
 </template>
 
 <style scoped>
@@ -203,5 +249,32 @@ input:hover, input:focus {
   .inner-container {
     width: 100%;
   }
+}
+
+/* GitHub Logo 样式 */
+.github-logo {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 1000; /* 确保图标在最上层 */
+}
+.github-logo img {
+  width: 40px; /* 调整为合适的图标大小 */
+  height: 40px;
+  border: 0;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  color: white;
+  text-align: center;
+  padding: 10px 0;
+}
+
+.footer .copyright p {
+  margin: 0;
 }
 </style>
